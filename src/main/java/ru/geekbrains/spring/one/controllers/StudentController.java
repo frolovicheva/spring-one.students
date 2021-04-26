@@ -27,13 +27,18 @@ public class StudentController {
         return "index";
     }
 
-    @GetMapping("/students/{id}")
-    public String showStudentInfo(@PathVariable(name = "id") Long id, Model model) {
+    @GetMapping("/students/find/{id}")
+    public String showStudentInfo(@RequestParam Long id, Model model) {
         Optional<Student> student = studentService.findOneById(id);
         if (student.isPresent()) {
             model.addAttribute("student", student.get());
         }
         return "student_info";
+    }
+
+    @GetMapping("/students/finder")
+    public String showFinder() {
+        return "find_student_form";
     }
 
     // [http://localhost:8189/app]/students/creator
@@ -50,20 +55,6 @@ public class StudentController {
 //        return "redirect:/students/all";
 //    }
 
-    // POST [http://localhost:8189/app]/students/create
-    // body: id=10&name=Nicolas&score=95
-    // public class Student {
-    //    private Long id;
-    //    private String name;
-    //    private int score;
-
-    // Student student = new Student();
-    // requestparam: id=10
-    // student.set[Id](10);
-    // requestparam: name=10
-    // student.set[Name](Nicolas);
-    // requestparam: score=95
-    // student.set[Score](95);
     @PostMapping("/students/create")
     public String createNewStudent(@ModelAttribute Student student) {
         studentService.save(student);
@@ -73,6 +64,18 @@ public class StudentController {
     @GetMapping("/students/delete/{id}")
     public String deleteStudentById(@PathVariable Long id) {
         studentService.deleteById(id);
+        return "redirect:/";
+    }
+
+    @GetMapping("/students/minus/{id}")
+    public String minusStudentScore(@PathVariable Long id) {
+        studentService.scoreDecrement (id);
+        return "redirect:/";
+    }
+
+    @GetMapping("/students/plus/{id}")
+    public String plusStudentScore(@PathVariable Long id) {
+        studentService.scoreIncrement (id);
         return "redirect:/";
     }
 }
